@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster Elite</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg,  #007bff, #00d4ff, #007bff);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+        .quiz-container {
+            max-width: 1800px;
+            margin: 70px auto;
+            padding: 60px;
+        }
+        .quiz-card {
+            background: rgba(255, 255, 255, 0.99);
+            border-radius: 35px;
+            padding: 60px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        .quiz-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 35px 70px rgba(0,0,0,0.4);
+        }
+        .header {
+            background: linear-gradient(90deg, #007bff, #00d4ff, #007bff);
+            color: white;
+            padding: 30px;
+            border-radius: 30px 30px 0 0;
+            margin: -60px -60px 60px -60px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+        .btn-custom {
+            padding: 15px 35px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: all 0.4s ease;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .btn-custom:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .btn-primary {
+            background: #007bff;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        .btn-success {
+            background: #28a745;
+        }
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        .option-btn {
+            width: 100%;
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 18px;
+            background: #f8f9fa;
+            border: 3px solid #dee2e6;
+            text-align: left;
+            font-size: 1.2rem;
+            transition: all 0.4s ease;
+        }
+        .option-btn:hover {
+            background: #e9ecef;
+            border-color: #007bff;
+        }
+        .option-btn.selected {
+            background: #007bff;
+            color: white;
+            border-color: #0056b3;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .category-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        .category-item {
+            padding: 18px 40px;
+            background: #ffffff;
+            color: #007bff;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: all 0.5s ease;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .category-item:hover {
+            background: #007bff;
+            color: white;
+            transform: scale(1.15);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+        }
+        .quiz-list-item {
+            cursor: pointer;
+            padding: 30px;
+            border-radius: 25px;
+            background: #ffffff;
+            margin-bottom: 25px;
+            transition: all 0.5s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .quiz-list-item:hover {
+            background: #f1f3f5;
+            transform: translateX(12px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .progress-bar {
+            height: 20px;
+            border-radius: 12px;
+            background: #e9ecef;
+            transition: width 0.4s ease;
+        }
+        .timer {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #dc3545;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .search-bar {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+        .search-bar:hover, .search-bar:focus-within {
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+        }
+        .search-bar input {
+            border: none;
+            font-size: 1.2rem;
+            padding: 12px;
+            border-radius: 15px;
+        }
+        .search-bar input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        #homeSection, #quizSection, #resultSection {
+            display: none;
+        }
+        #homeSection.active, #quizSection.active, #resultSection.active {
+            display: block;
+        }
+        .result-icon {
+            font-size: 6rem;
+            color: #28a745;
+            animation: bounce 1.8s infinite;
+        }
+        .score-details {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Home Section -->
+        <div id="homeSection" class="active quiz-card">
+            <div class="header">
+                <h1 class="m-0">QuizMaster Elite</h1>
+            </div>
+            <div class="search-bar input-group mb-5">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search quizzes by language...">
+                <button class="btn btn-primary btn-custom" onclick="searchQuizzes()">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+            <h3 class="mb-5 text-center">Categories</h3>
+            <div class="category-list mb-5" id="categoryList"></div>
+            <h3 class="mb-5 text-center">Available Quizzes</h3>
+            <div id="quizList" class="list-group"></div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div id="quizSection" class="quiz-card">
+            <div class="header d-flex justify-content-between align-items-center">
+                <h2 id="quizTitle" class="m-0"></h2>
+                <span class="timer" id="timer">Time: 00:00</span>
+            </div>
+            <div class="progress mb-5">
+                <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+            </div>
+            <div id="questionArea" style="display: none;">
+                <h4 id="questionText" class="mb-5"></h4>
+                <div id="options" class="d-grid gap-3"></div>
+                <div class="d-flex justify-content-between mt-5">
+                    <button class="btn btn-secondary btn-custom" onclick="prevQuestion()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button class="btn btn-primary btn-custom" id="nextBtn" onclick="nextQuestion()">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            <button class="btn btn-success btn-custom w-100 mt-5" onclick="startQuiz()" id="startBtn">
+                <i class="fas fa-play"></i> Start Quiz
+            </button>
+        </div>
+
+        <!-- Result Section -->
+        <div id="resultSection" class="quiz-card text-center">
+            <div class="header">
+                <h2 class="m-0">Quiz Results</h2>
+            </div>
+            <i class="fas fa-trophy result-icon mb-5"></i>
+            <div class="score-details">
+                <h3 id="scoreText" class="mb-4"></h3>
+                <p id="timeTaken" class="fs-5 mb-0"></p>
+            </div>
+            <button class="btn btn-primary btn-custom" onclick="backToHome()">
+                <i class="fas fa-home"></i> Back to Home
+            </button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Custom Script -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Quiz Data with 5 Languages, 5 Questions Each
+        const quizzes = {
+            "JavaScript": [
+                { question: "What is JavaScript primarily used for?", options: ["Web Development", "Server Management", "Database Design", "Hardware Programming"], answer: "Web Development" },
+                { question: "Which symbol denotes strict equality?", options: ["==", "===", "!=", "!=="], answer: "===" },
+                { question: "What does 'NaN' stand for?", options: ["Not a Number", "New and Nice", "Null and None", "None Above"], answer: "Not a Number" },
+                { question: "Which is a JS framework?", options: ["React", "Django", "Spring", "Laravel"], answer: "React" },
+                { question: "What is the output of 'typeof null'?", options: ["object", "null", "undefined", "string"], answer: "object" }
+            ],
+            "Python": [
+                { question: "Who created Python?", options: ["Guido van Rossum", "Linus Torvalds", "Bill Gates", "Mark Zuckerberg"], answer: "Guido van Rossum" },
+                { question: "What is Python known for?", options: ["Readability", "Speed", "Graphics", "Hardware"], answer: "Readability" },
+                { question: "Which is a Python library?", options: ["NumPy", "jQuery", "Bootstrap", "React"], answer: "NumPy" },
+                { question: "What keyword defines a function?", options: ["def", "function", "func", "define"], answer: "def" },
+                { question: "Which is Python's package manager?", options: ["pip", "npm", "mvn", "gem"], answer: "pip" }
+            ],
+            "Java": [
+                { question: "What runs Java code?", options: ["JVM", "CPU", "Browser", "OS"], answer: "JVM" },
+                { question: "What is Java's main feature?", options: ["Platform Independence", "Speed", "Simplicity", "Size"], answer: "Platform Independence" },
+                { question: "Which company created Java?", options: ["Sun Microsystems", "Microsoft", "Google", "Apple"], answer: "Sun Microsystems" },
+                { question: "What is the Java file extension?", options: [".java", ".js", ".py", ".cpp"], answer: ".java" },
+                { question: "Which keyword creates a class?", options: ["class", "struct", "type", "object"], answer: "class" }
+            ],
+            "C++": [
+                { question: "Who created C++?", options: ["Bjarne Stroustrup", "Dennis Ritchie", "James Gosling", "Guido van Rossum"], answer: "Bjarne Stroustrup" },
+                { question: "What is C++ known for?", options: ["Performance", "Simplicity", "Web", "Scripting"], answer: "Performance" },
+                { question: "Which symbol denotes a pointer?", options: ["*", "&", "#", "@"], answer: "*" },
+                { question: "What is the file extension for C++?", options: [".cpp", ".c", ".cc", ".cxx"], answer: ".cpp" },
+                { question: "Which keyword allocates memory?", options: ["new", "malloc", "alloc", "create"], answer: "new" }
+            ],
+            "PHP": [
+                { question: "What does PHP stand for?", options: ["Hypertext Preprocessor", "Personal Home Page", "PHP Hypertext", "Page Handler"], answer: "Hypertext Preprocessor" },
+                { question: "Which symbol starts PHP code?", options: ["<?php", "<php", "<?", "<%"], answer: "<?php" },
+                { question: "What is PHP primarily used for?", options: ["Web Development", "Game Development", "AI", "Desktop Apps"], answer: "Web Development" },
+                { question: "Which is a PHP framework?", options: ["Laravel", "React", "Spring", "Django"], answer: "Laravel" },
+                { question: "What function outputs text?", options: ["echo", "print", "write", "display"], answer: "echo" }
+            ]
+        };
+
+        let currentQuiz = null;
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+        let timerInterval = null;
+        let timeElapsed = 0;
+
+        // Initialize Home Page
+        function initHome() {
+            const categories = Object.keys(quizzes);
+            const categoryList = document.getElementById('categoryList');
+            const quizList = document.getElementById('quizList');
+            
+            categoryList.innerHTML = categories.map(cat => 
+                `<span class="category-item" onclick="filterByCategory('${cat}')">${cat}</span>`
+            ).join('');
+
+            quizList.innerHTML = categories.map(cat => 
+                `<div class="list-group-item quiz-list-item" onclick="selectQuiz('${cat}')">
+                    <span><i class="fas fa-book me-3"></i> ${cat} Quiz</span>
+                    <span class="badge bg-primary rounded-pill">5 Questions</span>
+                </div>`
+            ).join('');
+        }
+
+        // Search Functionality
+        function searchQuizzes() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const quizList = document.getElementById('quizList');
+            const categories = Object.keys(quizzes);
+            
+            quizList.innerHTML = categories
+                .filter(cat => cat.toLowerCase().includes(searchTerm))
+                .map(cat => `<div class="list-group-item quiz-list-item" onclick="selectQuiz('${cat}')">
+                    <span><i class="fas fa-book me-3"></i> ${cat} Quiz</span>
+                    <span class="badge bg-primary rounded-pill">5 Questions</span>
+                </div>`
+            ).join('');
+        }
+
+        // Filter by Category
+        function filterByCategory(category) {
+            const quizList = document.getElementById('quizList');
+            quizList.innerHTML = `<div class="list-group-item quiz-list-item" onclick="selectQuiz('${category}')">
+                <span><i class="fas fa-book me-3"></i> ${category} Quiz</span>
+                <span class="badge bg-primary rounded-pill">5 Questions</span>
+            </div>`;
+        }
+
+        // Select Quiz
+        function selectQuiz(quizName) {
+            currentQuiz = quizzes[quizName];
+            currentQuestion = 0;
+            score = 0;
+            userAnswers = [];
+            timeElapsed = 0;
+            document.getElementById('quizTitle').textContent = `${quizName} Quiz`;
+            document.getElementById('homeSection').classList.remove('active');
+            document.getElementById('quizSection').classList.add('active');
+            document.getElementById('questionArea').style.display = 'none';
+            document.getElementById('startBtn').style.display = 'block';
+            document.getElementById('progressBar').style.width = '0%';
+        }
+
+        // Start Quiz
+        function startQuiz() {
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('questionArea').style.display = 'block';
+            startTimer();
+            showQuestion();
+        }
+
+        // Start Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeElapsed++;
+                const minutes = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+                const seconds = (timeElapsed % 60).toString().padStart(2, '0');
+                document.getElementById('timer').textContent = `Time: ${minutes}:${seconds}`;
+            }, 1000);
+        }
+
+        // Show Question
+        function showQuestion() {
+            const question = currentQuiz[currentQuestion];
+            document.getElementById('questionText').textContent = `${currentQuestion + 1}. ${question.question}`;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = question.options.map((opt, index) => 
+                `<button class="btn option-btn" onclick="selectAnswer('${opt}', this)">
+                    ${String.fromCharCode(65 + index)}. ${opt}
+                </button>`
+            ).join('');
+            document.getElementById('nextBtn').innerHTML = currentQuestion === currentQuiz.length - 1 ? 
+                'Submit <i class="fas fa-check"></i>' : 'Next <i class="fas fa-arrow-right"></i>';
+            updateProgress();
+            if (userAnswers[currentQuestion]) {
+                const buttons = optionsDiv.getElementsByClassName('option-btn');
+                for (let btn of buttons) {
+                    if (btn.textContent.includes(userAnswers[currentQuestion])) {
+                        btn.classList.add('selected');
+                    }
+                }
+            }
+        }
+
+        // Update Progress Bar
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / currentQuiz.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // Select Answer
+        function selectAnswer(answer, button) {
+            userAnswers[currentQuestion] = answer;
+            const buttons = document.getElementById('options').getElementsByClassName('option-btn');
+            for (let btn of buttons) {
+                btn.classList.remove('selected');
+            }
+            button.classList.add('selected');
+        }
+
+        // Previous Question
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        // Next Question
+        function nextQuestion() {
+            if (!userAnswers[currentQuestion]) {
+                alert('Please select an answer before proceeding!');
+                return;
+            }
+            if (currentQuestion < currentQuiz.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                calculateScore();
+            }
+        }
+
+        // Calculate Score
+        function calculateScore() {
+            score = userAnswers.reduce((acc, answer, index) => 
+                acc + (answer === currentQuiz[index].answer ? 1 : 0), 0);
+            clearInterval(timerInterval);
+            showResult();
+        }
+
+        // Show Result
+        function showResult() {
+            document.getElementById('quizSection').classList.remove('active');
+            document.getElementById('resultSection').classList.add('active');
+            const percentage = (score / currentQuiz.length) * 100;
+            const minutes = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+            const seconds = (timeElapsed % 60).toString().padStart(2, '0');
+            document.getElementById('scoreText').innerHTML = 
+                `Score: ${score}/${currentQuiz.length} (${percentage.toFixed(2)}%)`;
+            document.getElementById('timeTaken').textContent = 
+                `Time Taken: ${minutes}:${seconds}`;
+        }
+
+        // Back to Home
+        function backToHome() {
+            document.getElementById('resultSection').classList.remove('active');
+            document.getElementById('homeSection').classList.add('active');
+            document.getElementById('searchInput').value = '';
+            initHome();
+        }
+
+        // Initialize on Load
+        window.onload = initHome;
+    </script>
+</body>
+</html>
